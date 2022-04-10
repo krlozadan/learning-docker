@@ -1,0 +1,36 @@
+version: '3'
+
+# If not specified, compse will create a network and include all of the containers defined in the file
+
+services:
+  redis: # name of the container
+    container_name: redis
+    # this is lookin locally, then assumes dockerhub to get the image. Otherwise, a full image registry url is expected "domain/image-name:tag"
+    image: redis:alpine
+    # maps the host port to the container port
+    ports:
+      - 6379:6379
+    # needed for data persistency
+    volumes:
+      - redis-data:/data
+  redis-insight:
+    container_name: redis-insight
+    image: redislabs/redisinsight
+    ports:
+      - 8001:8001
+    depends_on:
+      - redis
+  python-app:
+    container_name: python-app
+    image: python-app:latest
+    ports:
+      - 5000:5000
+    depends_on:
+      - redis
+    # This will create a mount volume and the files in the host will be mounted to the container
+    volumes:
+      - ./app:/app
+
+volumes:
+  redis-data:
+    driver: local
