@@ -19,9 +19,9 @@ COPY app .
 # Exposes a port and the protocol to be used with it
 EXPOSE 5000/tcp
 
-RUN export FLASK_APP=./app/app.py
+ENV FLASK_APP=./app/app.py
 
-RUN export FLASK_ENV=development
+ENV FLASK_ENV=development
 
 # Teh command docker will use when starting up the container
 CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
