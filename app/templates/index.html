@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-screen">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,8 +8,19 @@
     <link rel="shortcut icon" href="static/img/python.ico">
     <link rel="stylesheet" href="static/css/main.css">
 </head>
-<body>
-    <h1 class="text-3xl font-bold underline">Sample Docker App using Docker</h1>
-    <p>Welcome {{ name }}</p>
+<body class="flex flex-col h-screen">
+    <h1 class="bg-sky-500 p-5 text-center text-slate-200 text-3xl font-bold">Sample Python/Redis App using Docker</h1>
+    <div class="flex flex-col bg-slate-100 grow justify-center">
+        <div class="bg-slate-200 py-10 px-6 place-self-center rounded shadow-md shadow-slate-300">
+            <form>
+                <label class="block">
+                    <span class="block text-slate-700 font-medium text-md">Name</span>
+                    <input type="text" required minlength="3" value="{{ name }}" class="peer block w-full p-1.5 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 invalid:border-pink-500 invalid:text-pink-500 focus:invalid:border-pink-500">
+                    <p class="hidden peer-invalid:block text-pink-600 text-sm">Please provide a valid name value</p>
+                </label>
+                <button class="w-full mt-2 p-2 rounded-md bg-sky-500 hover:bg-sky-600 active:bg-green-500 text-white">Edit</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
