@@ -1,0 +1,24 @@
+{
+  "name": "learning-docker",
+  "version": "1.0.0",
+  "description": "Sample Docker app using Python and Redis",
+  "scripts": {
+    "css": "tailwindcss -i ./app/styles/main.css -o ./app/static/css/main.css -m --watch",
+    "dev": "export FLASK_APP=./app/app.py; export FLASK_ENV=development; python3 -m flask run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github-krlozadan:krlozadan/learning-docker.git"
+  },
+  "keywords": [
+    "docker",
+    "python",
+    "redis",
+    "insight"
+  ],
+  "author": "Carlos Adan",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.0.23"
+  }
+}
