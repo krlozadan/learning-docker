@@ -1,6 +1,36 @@
 # Learning Docker
 
-## Common commands to run a web application:
+## Container Lifecycle
+
+A container can be in one of the following states:
+
+1. Created: Container ready to run for the first time
+2. Running
+3. Exited: Container has completed the issued command
+
+```sh
+# List running containers
+docker ps
+
+# List all containers, even the ones that are not running
+docker ps [--all/-a]
+```
+
+## Common commands to run a container:
+
+Differences between **create**, **start** and **run** commands
+
+```sh
+# Fetches prepares the file system snapshot with all the associated resources to run the container
+docker create [image]
+
+# Executes a command in the previously created/stopped container
+# The -a option attaches the container output to the termninal
+docker start -a [container]
+
+# Executes a command in a new container, given the specified image. It is like create + start
+docker run [image]
+```
 
 `docker container run -it --name <name> --rm -p <host port>:<container port> -d -e ENV=value <image name> --restart on-failure`
 
@@ -24,16 +54,48 @@ You can use for instance the **Ctrl + C** combo to stop the container
 
 `-v [src-path]:[dest-path]`: Mounts a volume that helps bypassing the Union file system allowing to share files between the host and the container. The paths must be absolute or you can use $PWD for the src-path. This is perfect for development mode.
 
-## Profiling
+## Commands to stop a container
+
+Docker uses [signals](https://en.wikipedia.org/wiki/Signal_(IPC)) to stop running containers
+
+```sh
+# Sends a SIGTERM signal: if handled by the process, it can do a clean up and give it time to shut down
+docker stop [container]
+
+# Sends a SIGKILL signal: forces a process to terminate immediately
+docker kill [container]
+
+# Remove all stopped containers along with unused networks, dangling images and build cache
+docker system prune
+```
+
+## Profiling and Debugging
 
 Logs:
-`docker container logs -f <image name>`
 
-`-f`: Get logs in realtime, as they come in
+```sh
+# Get all the output logged by the specified container
+# You can follow the logs as they come in by adding the follow argument
+docker logs [container] [-f/--follow]
 
-Stats about network and memory usage
+# Stats about network and memory usage
+docker stats [container]
+```
 
-`docker container stats <image name>`
+## Execute commands inside a running container
+
+```sh
+# Lets you run commands inside a running container
+docker exec [options] [container] [command]
+
+# Examples:
+# Will use an interactive terminal to traverse the container file system
+docker container exec -it web1 sh
+# Runs Redis CLI
+docker container exec -it local_redis redis-cli
+```
+
+If you have a mounted volume and you create a file in the container it might get copied to the docker host. If this happens and you're Running Linux check if the owner of the file in the Docker host is the root. If that's the case, then use the `--user $(id -u):$(id -g)` flag in the exec command to use the current logged in user instead of root
 
 ## Dockerfile
 
@@ -46,12 +108,6 @@ A dockerfile always has to start with a **FROM** command that basically imports 
 **LABEL** Adds labels to the docker image
 
 **CMD** This is normally the command used to execute the app. 
-
-## Exec
-
-`docker container exec [options] [container] [command]` lets you run commands inside a running container. 
-Example: `docker container exec -it web1 sh` will use an interactive terminal to traverse the container file system.
-If you have a mounted volume and you create a file in the container it might get copied to the docker host. If this happens and you're Running Linux check if the owner of the file in the Docker host is the root. If that's the case, then use the `--user $(id -u):$(id -g)` flag in the exec command to use the current logged in user instead of root
 
 ## Network
 
