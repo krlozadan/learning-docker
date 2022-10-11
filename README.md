@@ -133,6 +133,25 @@ LABEL [key=value]
 CMD [command]
 ```
 
+## Creating an image from a running container
+
+Althought not widely used, it is possible to create an image based on a running container. As an example:
+
+```sh
+# To start an alpine container, attach the terminal and run the shell
+docker run -it alpine:latest sh
+
+# Inside the running container
+apk add --update redis
+
+# Using another terminal
+docker commit -c 'CMD ["redis-server"]' [container] # MacOS/Linux
+docker commit -c 'CMD "redis-server"' [container] # Windows
+
+# Creates and starts a new container from the new image
+docker run [image]
+```
+
 ## Network
 
 Docker networks enable the connection between docker containers and services using a drivers subsystem. To list the available drivers use `docker network ls`. By default this list includes: 
