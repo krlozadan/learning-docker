@@ -99,15 +99,27 @@ If you have a mounted volume and you create a file in the container it might get
 
 ## Dockerfile
 
-A dockerfile always has to start with a **FROM** command that basically imports a base image that can be another docker image or one you create from scratch. 
+A Dockerfile is a configuration file which defines how a container should behave. Every Dockerfile should:
+1. Specify a base image
+2. Run commands to add dependencies
+3. Specify the startup command
 
-**RUN** lets you run Linux commands like **cd, mkdir, cp**
+```Dockerfile
+# A dockerfile always has to start with a **FROM** command that basically imports a base image that can be another docker image or one you create from scratch.
+FROM [image]
 
-**WORKDIR** Sets the working directory to the one you choose so you don't have to keep cd'ing into it
+# Lets you run Linux commands like **cd, mkdir, cp**
+RUN [command]
 
-**LABEL** Adds labels to the docker image
+# Sets the working directory to the one you choose so you don't have to keep cd'ing into it
+WORKDIR [path]
 
-**CMD** This is normally the command used to execute the app. 
+# Adds labels to the docker image
+LABEL [string]
+
+# This is normally the command used to execute the app.
+CMD [command]
+```
 
 ## Network
 
