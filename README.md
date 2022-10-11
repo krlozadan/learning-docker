@@ -104,8 +104,20 @@ A Dockerfile is a configuration file which defines how a container should behave
 2. Run commands to add dependencies
 3. Specify the startup command
 
+```sh
+# Command used to create an image out of a Dockerfile
+# Tag an image to avoid using the auto generated id
+docker build [build context / path] -t [dockerId/project:version]
+
+# Example
+docker build . -t [my_id/my_app:latest]
+
+```
+
+Behind the scenes, Docker downloads the base image. It then creates temporary continers (files system snapshots) for each build step. It then saves a final image containing everything and sets the primary command to run upon start.
+
 ```Dockerfile
-# A dockerfile always has to start with a **FROM** command that basically imports a base image that can be another docker image or one you create from scratch.
+# A dockerfile always has to start with a FROM command that basically imports a base image that can be another docker image or one you create from scratch.
 FROM [image]
 
 # Lets you run Linux commands like **cd, mkdir, cp**
@@ -115,7 +127,7 @@ RUN [command]
 WORKDIR [path]
 
 # Adds labels to the docker image
-LABEL [string]
+LABEL [key=value]
 
 # This is normally the command used to execute the app.
 CMD [command]
