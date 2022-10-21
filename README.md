@@ -129,6 +129,9 @@ WORKDIR [path]
 # Adds labels to the docker image
 LABEL [key=value]
 
+# Copy files from the host to the docker image
+COPY [path/build context] [path in container]
+
 # This is normally the command used to execute the app.
 CMD [command]
 ```
