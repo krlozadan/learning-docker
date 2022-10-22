@@ -1,5 +1,14 @@
 # Learning Docker
 
+- [Container Lifecycle](#container-lifecycle)
+- [Running a container](#running-a-container)
+- [Stopping a container](#stopping-a-container)
+- [Profiling and debugging](#profiling-and-debugging)
+- [Exec Command](#exec-command)
+- [Image from running container](#image-from-running-container)
+- [Networking](#networking)
+- [Dockerfile](#dockerfile)
+
 ## Container Lifecycle
 
 A container can be in one of the following states:
@@ -16,7 +25,7 @@ docker ps
 docker ps [--all/-a]
 ```
 
-## Common commands to run a container:
+## Running a container
 
 Differences between **create**, **start** and **run** commands
 
@@ -32,29 +41,23 @@ docker start -a [container]
 docker run [image]
 ```
 
-`docker container run -it --name <name> --rm -p <host port>:<container port> -d -e ENV=value <image name> --restart on-failure`
+**Common arguments passed when running a container**
 
-`-it`: Creates a pseudo terminal that allows comminucation between the host and the container. 
-You can use for instance the **Ctrl + C** combo to stop the container
+```sh
+# -it: Creates a pseudo terminal that allows comminucation between the host and the container.
+# --name name: Gives a name to the container about to get created
+# --rm: This instructs Docker to remove the stopped container from the container registry
+# -p <host_port>:<container_port>: This maps the host with the container ports. If the host port is not provided it will get 1 randomly
+# -d: Runs the container in the background
+# -e: Set environment variables
+# --net network_name: connects the container to the specified network
+# --restart: Sets the restart rule. "No" by default, you can limit the number of times it restarts too.
+# -v [src-path]:[dest-path]: Mounts a volume that helps bypassing the Union file system allowing to share files between the host and the container. The paths must be absolute or you can use $PWD for the src-path. This is perfect for development mode.
+docker container run -it --name <name> --rm -p <host port>:<container port> -d -e ENV=value <image name> --restart on-failure
+```
+**Note**: You cannot use the --rm and the --restart flag at the same time
 
-`--name name`: Gives a name to the container about to get created
-
-`--rm`: This instructs Docker to remove the stopped container from the container registry
-
-`-p <host_port>:<container_port>`: This maps the host with the container ports. If the host port is not provided it will get 1 randomly
-
-`-d`: Runs the container in the background
-
-`-e`: Set environment variables
-
-`--net network_name`: 
-
-`--restart`: Sets the restart rule. **No** by default, you can limit the number of times it restarts too. 
-**Note:** You cannot use the --rm and the --restart flag at the same time
-
-`-v [src-path]:[dest-path]`: Mounts a volume that helps bypassing the Union file system allowing to share files between the host and the container. The paths must be absolute or you can use $PWD for the src-path. This is perfect for development mode.
-
-## Commands to stop a container
+## Stopping a container
 
 Docker uses [signals](https://en.wikipedia.org/wiki/Signal_(IPC)) to stop running containers
 
@@ -69,7 +72,7 @@ docker kill [container]
 docker system prune
 ```
 
-## Profiling and Debugging
+## Profiling and debugging
 
 Logs:
 
@@ -82,7 +85,9 @@ docker logs [container] [-f/--follow]
 docker stats [container]
 ```
 
-## Execute commands inside a running container
+## Exec Command
+
+Execute commands inside a running container
 
 ```sh
 # Lets you run commands inside a running container
@@ -96,6 +101,34 @@ docker container exec -it local_redis redis-cli
 ```
 
 If you have a mounted volume and you create a file in the container it might get copied to the docker host. If this happens and you're Running Linux check if the owner of the file in the Docker host is the root. If that's the case, then use the `--user $(id -u):$(id -g)` flag in the exec command to use the current logged in user instead of root
+
+## Image from running container
+
+Althought not widely used, it is possible to create an image based on a running container. As an example:
+
+```sh
+# To start an alpine container, attach the terminal and run the shell
+docker run -it alpine:latest sh
+
+# Inside the running container
+apk add --update redis
+
+# Using another terminal
+docker commit -c 'CMD ["redis-server"]' [container] # MacOS/Linux
+docker commit -c 'CMD "redis-server"' [container] # Windows
+
+# Creates and starts a new container from the new image
+docker run [image]
+```
+
+## Networking
+
+Docker networks enable the connection between docker containers and services using a drivers subsystem. To list the available drivers use `docker network ls`. By default this list includes:
+- Bridge: This is the default network driver where standalone containers get attached to so they can communicate with each other. You can check the container IP address by using the command `docker container exec <container_name> ifconfig`.
+- Host: Use this to isolate the container and use the host's networking directly
+- None: Diasbles the networking for the specified containers
+
+To create a new network bridge driver: `docker network create --driver bridge <name>`
 
 ## Dockerfile
 
@@ -135,31 +168,3 @@ COPY [path/build context] [path in container]
 # This is normally the command used to execute the app.
 CMD [command]
 ```
-
-## Creating an image from a running container
-
-Althought not widely used, it is possible to create an image based on a running container. As an example:
-
-```sh
-# To start an alpine container, attach the terminal and run the shell
-docker run -it alpine:latest sh
-
-# Inside the running container
-apk add --update redis
-
-# Using another terminal
-docker commit -c 'CMD ["redis-server"]' [container] # MacOS/Linux
-docker commit -c 'CMD "redis-server"' [container] # Windows
-
-# Creates and starts a new container from the new image
-docker run [image]
-```
-
-## Network
-
-Docker networks enable the connection between docker containers and services using a drivers subsystem. To list the available drivers use `docker network ls`. By default this list includes: 
-- Bridge: This is the default network driver where standalone containers get attached to so they can communicate with each other. You can check the container IP address by using the command `docker container exec <container_name> ifconfig`. 
-- Host: Use this to isolate the container and use the host's networking directly
-- None: Diasbles the networking for the specified containers
-
-To create a new network bridge driver: `docker network create --driver bridge <name>`
