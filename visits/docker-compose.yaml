@@ -1,0 +1,11 @@
+version: '3'
+
+# Each service represents a container within the application
+services:
+  redis-server: # service names, can also be used to resolve network hosts
+    image: redis:latest
+  node-app:
+    build: . # Where the Dockerfile context for the image is located
+    restart: always # Restart policies: https://docs.docker.com/config/containers/start-containers-automatically/
+    ports:
+      - 8080:8080 # Port mapping from host to docker engine

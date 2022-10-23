@@ -8,6 +8,7 @@
 - [Image from running container](#image-from-running-container)
 - [Networking](#networking)
 - [Dockerfile](#dockerfile)
+- [Docker Compose](#docker-compose)
 
 ## Container Lifecycle
 
@@ -137,6 +138,8 @@ A Dockerfile is a configuration file which defines how a container should behave
 2. Run commands to add dependencies
 3. Specify the startup command
 
+See [dockerfile reference](https://docs.docker.com/engine/reference/builder/)
+
 ```sh
 # Command used to create an image out of a Dockerfile
 # Tag an image to avoid using the auto generated id
@@ -167,4 +170,23 @@ COPY [path/build context] [path in container]
 
 # This is normally the command used to execute the app.
 CMD [command]
+```
+
+## Docker Compose
+
+Docker compose is used to start multiple contauners at the same time. Among other things, it helps us by making network communication between components easier and automates some of the long commands and arguments we pass to `docker run` normally. See [docker compose reference](https://docs.docker.com/compose/compose-file/)
+
+**Commands**
+
+```sh
+# docker run equivalent
+# -d: Detaches the terminal when running the containers
+# -f: path to docker-compose file
+docker-compose -f [path] up -d
+
+# docker stop equivalent
+docker-compose down
+
+# docker ps equivalent, but it only shows the containers related to the docker-compose file
+docker-compose ps
 ```
